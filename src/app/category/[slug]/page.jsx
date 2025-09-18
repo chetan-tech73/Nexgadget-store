@@ -1,36 +1,52 @@
-import CategoryClient from "./CategoryClient";
+import Link from "next/link";
+import dbConnect from "@/lib/db";
+import Product from "@/models/Product";
+import Image from "next/image";
 
-async function fetchProducts(slug) {
- try{
-      const base = process.env.NEXT_PUBLIC_BASE_URL || "";
-  const res = await fetch(`${base}/api/products?category=${encodeURIComponent(slug)}`, {
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    throw new Error("Failed to fetch products");
- }
-  
-  return res.json();
-} catch (error) {
-  console.error("Error fetching products:", error);
-  return [];
-}
-}
+export default async function CategoryPage(props) {
+  const params = await props.params;
+  await dbConnect();
 
-export default async function CategoryPage({ params }) {
-  
-  const { slug } = await params;
-  const products = await fetchProducts(slug);
+  const slug = params.slug;
+  const products = await Product.find({ category: slug }).lean();
 
+  if (!products || products.length === 0) {
+    return (
+      <div className="p-6">
+        <h1 className="text-2x1 font-bold capitalize">{slug}</h1>
+        <p className="mt-4 text-gray-600">No product found in this category.</p>
+      </div>
+    );
+  }
   return (
-    <div className="px-4 py-6">
-      <h1 className="text-2xl md:text-3xl font-bold mb-6 capitalize">{slug.replace("_", " ")}</h1>
-      <CategoryClient products={products} />
+    <div className="p-6">
+      <h1 className="text-2x1 font-bold capitalize">{slug}</h1>
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {products.map((product) => (
+          <div
+          key={product._id}
+          className="border rounded-lg shadow hover:shadow-lg transition overflow-hidden"
+          >
+            <Link href={`/product/${product.slug}`}>
+            <div>
+              <Image
+              src={product.image}
+              alt={product.name}
+              height={50}
+              width={50}
+              className="w-full h-48 object-cover"
+              />
+              <div className="p-4">
+                <h2 className="font-semibold">{product.name}</h2>
+                <p className="text-gray-700">
+                  ₦{product.price.toLocaleString()}
+                </p>
+              </div>
+            </div>
+            </Link>
+            </div>
+        ))}
+      </div>
     </div>
   );
-}
-
-export async function generateStaticParams() {
-  const categories = ["laptops", "smartphones", "cctv-security", "solar-energy", "accessories"];
-  return categories.map((slug) => ({ slug }));
 }
