@@ -3,7 +3,7 @@
 import { useContext } from "react";
 import Image from "next/image";
 import { CartContext } from "@/context/CartContext";
-import { formatCurrency } from "@/lib/format";
+import { formatNaira } from "@/lib/format";
 
 export default function CartPage() {
   const { cart, updateQty, removeFromCart, clearCart } = useContext(CartContext);
@@ -16,11 +16,11 @@ export default function CartPage() {
     const itemsText = cart
       .map(
         (item) =>
-          `${item.qty} × ${item.name} - ${formatCurrency(item.price * item.qty)}`
+          `${item.qty} × ${item.name} - ${formatNaira(item.price * item.qty)}`
       )
       .join("\n");
 
-    const message = `Hello, I want to order:\n${itemsText}\n\nTotal: ${formatCurrency(
+    const message = `Hello, I want to order:\n${itemsText}\n\nTotal: ${formatNaira(
       total
     )}`;
 
@@ -58,8 +58,8 @@ export default function CartPage() {
                   <div>
                     <p className="font-medium">{item.name}</p>
                     <p className="text-gray-500">
-                      {formatCurrency(item.price)} × {item.qty} ={" "}
-                      {formatCurrency(item.price * item.qty)}
+                      {formatNaira(item.price)} × {item.qty} ={" "}
+                      {formatNaira(item.price * item.qty)}
                     </p>
                   </div>
                 </div>
@@ -93,7 +93,7 @@ export default function CartPage() {
 
           {/* ✅ Cart Total */}
           <h2 className="text-xl font-semibold mt-6">
-            Total: {formatCurrency(total)}
+            Total: {formatNaira(total)}
           </h2>
 
           {/* ✅ Cart Actions */}

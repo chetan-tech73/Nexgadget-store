@@ -7,7 +7,7 @@ export function generateOrderId(prefix = "NGN") {
  return `${prefix}-${yymmdd}-${random}`;
 }
 
-export function buildWhatsappCartMessage(cart, total, brand, customer, orderId){
+export function buildWhatsAppCartMessage(cart, total, brand, customer, orderId){
     const lines = [];
     lines.push(`${brand} - Order`);
     lines.push(`Order ID: ${orderId}`);

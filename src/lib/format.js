@@ -1,4 +1,4 @@
-export function formatCurrency(amount) {
+export function formatNaira(amount) {
     if (!amount && amount !== 0)
     return "";
     return new Intl.NumberFormat("en-NG", {
