@@ -36,9 +36,14 @@ export async function POST(req) {
 export async function GET() {
   try {
     await dbConnect();
-    const products = await Product.find({});
-    console.log("Products fetched:", products.length);
-    return NextResponse.json(products);
+    const products = await Product.find({}).lean();
+    return NextResponse.json(products, {
+      status: 200,
+      headers: {
+        "Cache-Control": "no-store",
+      },
+    });
+
   } catch (err) {
     console.error("Error fetching products:", err.message, err.stack);
     return NextResponse.json(
